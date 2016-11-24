@@ -25,11 +25,11 @@ import feign.jackson.JacksonDecoder;
 public class FeignController {
 
 	private final RestTemplate restTemplate;
-	private final RestUserClient client;
+	private final UserApi userApi;
 
 	public FeignController(RestTemplateBuilder builder) {
-		this.client = Feign.builder().decoder(new JacksonDecoder())
-				.target(RestUserClient.class, "http://localhost:8080");
+		this.userApi = Feign.builder().decoder(new JacksonDecoder())
+				.target(UserApi.class, "http://localhost:8080");
 		this.restTemplate = builder.build();
 
 	}
@@ -37,7 +37,7 @@ public class FeignController {
 	// Feignを使った場合1
 	@GetMapping("/user/{id}")
 	public User user(@PathVariable long id) {
-		User user = client.user(id);
+		User user = userApi.user(id);
 		user.setName(user.getName() + " via Feign");
 		return user;
 	}
@@ -45,7 +45,7 @@ public class FeignController {
 	// Feignを使った場合2
 	@GetMapping("/user")
 	public List<User> user() {
-		return client.user().stream().map(u -> {
+		return userApi.user().stream().map(u -> {
 			u.setName(u.getName() + " via Feign");
 			return u;
 		}).collect(Collectors.toList());
@@ -60,7 +60,7 @@ public class FeignController {
 		return user;
 	}
 
-	public interface RestUserClient {
+	public interface UserApi {
 		@RequestLine("GET /feigndummy/user/{id}")
 		User user(@Param("id") long id);
 
