@@ -1,0 +1,13 @@
+server:
+  port: 18080 
+  
+spring:
+  application:
+    name: eureka-service-example
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    hostname: localhost
